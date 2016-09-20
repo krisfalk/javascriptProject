@@ -276,7 +276,37 @@ function printAllToConsole(dataObj){
 printAllToConsole(dataObject);
 */
 
-function initSearch(){
+	alert("Search for a person: ")
+  	var foundPerson = getPersonByName(prompt("Enter person's first name: "),prompt("Enter person's last name: "));
+  	alert("1");
+  	var descendants = new array();
+  	alert("2");
+  	setDescendants(foundPerson);
+	alert("3");
+  	var result = "Info found: " + foundPerson.firstName + " " + foundPerson.lastName + "\r\n" + foundPerson.gender + "\r\nDate of Birth: " +
+  		foundPerson.dob + "\r\nHeight: " + foundPerson.height + " - Weight: " + foundPerson.weight + "\r\nEye Color: " + foundPerson.eyeColor +
+  		"\r\nOccupation: " + foundPerson.occupation;
+
+  	alert(result);
+  	alert("Too far!!");
+  	alert(descendants);
+
+  	function setDescendants(person){
+  		for (var i = 0; i < src.dataObject.length; i++) {
+  			if(!src.dataObject[i].parents.indexOf(person))
+  				descendants.push(src.dataObject[i]);
+  		}
+  	}
+
+  	function getPersonByName(firstNameSearch, lastNameSearch){
+  		for (var item in src.dataObject) {
+  			if (src.dataObject.hasOwnProperty(item)) {
+  				return src.dataObject[item];
+  			}
+  		}
+  	}
+
+/*function initSearch(){
 	alert("Hello World");
 
 	// get all the information you need to run the search
@@ -295,9 +325,7 @@ function responder(results){
 }
 
 function getPersonInfo(firstname, lastname){
-	var result = "This will be the information for whoever you searched for";
-	// look up person's information
-	return result;
+		
 }
 
 function getFamily(){
@@ -306,5 +334,5 @@ function getFamily(){
 
 // there will be much more here, and some of the code above will certainly change
 
-initSearch();
+initSearch();*/
 window.close(); // exit window as the end of the session -- you may remove this
