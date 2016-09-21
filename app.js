@@ -283,7 +283,25 @@ printAllToConsole(dataObject);
   	displayPerson(dataObject[foundPerson], "");
   	getDescendants(foundPerson);
   	displayListOfPersons(descendants);
+  	displayPerson(dataObject[getOldestFromArray(descendants)], "Next of kin:\r\n");
 
+
+
+  	function getOldestFromArray(listOfPeople){
+  		var OldestPerson = undefined;
+  		for (var i = 0; i < listOfPeople.length; i++) {
+  			var currentDOB = dataObject[listOfPeople[i]].dob.split("/");
+  			if(OldestPerson != undefined){
+  				var previousDOB = dataObject[OldestPerson].dob.split("/");
+  			}
+  			if(OldestPerson == undefined){
+  				OldestPerson = listOfPeople[i];
+  			} else if(currentDOB[2] < previousDOB[2]){
+  				OldestPerson = listOfPeople[i];
+  			}
+  		}
+  		return OldestPerson;
+  	}
   	function displayListOfPersons(listOfPeople){
   		for(var i = 0; i < listOfPeople.length; i++){
   			displayPerson(dataObject[listOfPeople[i]], ("Descendant " + (i + 1) + ":\r\n"))
@@ -298,7 +316,6 @@ printAllToConsole(dataObject);
   			}
   		}
   	}
-
   	function displayPerson(person, displayString){
   		var buildPerson = "" + displayString;
   		for(var item in person){
@@ -306,14 +323,11 @@ printAllToConsole(dataObject);
   		}
   		alert(buildPerson);
   	}
-
   	function getPersonByName(firstNameSearch, lastNameSearch){
   		for (var item in dataObject) {
   			if (dataObject.hasOwnProperty(item)) {
-				if(dataObject[item].firstName == firstNameSearch){
-					if(dataObject[item].lastName == lastNameSearch){
+				if(dataObject[item].firstName == firstNameSearch && dataObject[item].lastName == lastNameSearch){
 					return item;
-					}
 				}
 			}
   		}
