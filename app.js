@@ -275,37 +275,46 @@ function printAllToConsole(dataObj){
 }
 printAllToConsole(dataObject);
 */
-
-	alert("Search for a person: ")
+	alert("Search for a person: ");
   	var foundPerson = getPersonByName(prompt("Enter person's first name: "),prompt("Enter person's last name: "));
-  	alert("1");
-  	var descendants = new array();
-  	alert("2");
-  	setDescendants(foundPerson);
-	alert("3");
-  	var result = "Info found: " + foundPerson.firstName + " " + foundPerson.lastName + "\r\n" + foundPerson.gender + "\r\nDate of Birth: " +
-  		foundPerson.dob + "\r\nHeight: " + foundPerson.height + " - Weight: " + foundPerson.weight + "\r\nEye Color: " + foundPerson.eyeColor +
-  		"\r\nOccupation: " + foundPerson.occupation;
+  	var descendants = [];
 
+  	displayPerson(foundPerson);
+  	alert(foundPerson.firstName + " " + foundPerson.lastName);
+
+  	setDescendants(foundPerson);
+
+	alert("3");
   	alert(result);
   	alert("Too far!!");
   	alert(descendants);
 
   	function setDescendants(person){
-  		for (var i = 0; i < src.dataObject.length; i++) {
+  		for (var item in dataObject) {
   			if(!src.dataObject[i].parents.indexOf(person))
   				descendants.push(src.dataObject[i]);
   		}
   	}
 
-  	function getPersonByName(firstNameSearch, lastNameSearch){
-  		for (var item in src.dataObject) {
-  			if (src.dataObject.hasOwnProperty(item)) {
-  				return src.dataObject[item];
-  			}
+  	function displayPerson(person){
+  		var buildPerson = "";
+  		for(var item in person){
+  			buildPerson = buildPerson + item + ": " + item.property + "\r\n";
   		}
+  		alert(buildPerson);
   	}
 
+  	function getPersonByName(firstNameSearch, lastNameSearch){
+  		for (var item in dataObject) {
+  			if (dataObject.hasOwnProperty(item)) {
+				if(dataObject[item].firstName == firstNameSearch){
+					if(dataObject[item].lastName == lastNameSearch){
+					return dataObject[item];
+					}
+				}
+			}
+  		}
+  	}
 /*function initSearch(){
 	alert("Hello World");
 
