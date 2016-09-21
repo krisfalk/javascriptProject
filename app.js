@@ -275,40 +275,44 @@ function printAllToConsole(dataObj){
 }
 printAllToConsole(dataObject);
 */
+	
 	alert("Search for a person: ");
   	var foundPerson = getPersonByName(prompt("Enter person's first name: "),prompt("Enter person's last name: "));
   	var descendants = [];
 
-  	displayPerson(foundPerson);
+  	displayPerson(dataObject[foundPerson], "");
+  	getDescendants(foundPerson);
+  	displayListOfPersons(descendants);
 
-  	setDescendants(foundPerson);
-
-	alert("3");
-  	alert(result);
-  	alert("Too far!!");
-  	alert(descendants);
-
-  	function setDescendants(person){
+  	function displayListOfPersons(listOfPeople){
+  		for(var i = 0; i < listOfPeople.length; i++){
+  			displayPerson(dataObject[listOfPeople[i]], ("Descendant " + (i + 1) + ":\r\n"))
+  		}
+  	}
+  	function getDescendants(person){
   		for (var item in dataObject) {
-  			if(!src.dataObject[i].parents.indexOf(person))
-  				descendants.push(src.dataObject[i]);
+  			if(dataObject[item].parents.length != 0){
+  				if(dataObject[item].parents[0] == person || dataObject[item].parents[1] == person){
+  					descendants.push(item);
+  				}
+  			}
   		}
   	}
 
-  	function displayPerson(person){
-  		var buildPerson = "";
+  	function displayPerson(person, displayString){
+  		var buildPerson = "" + displayString;
   		for(var item in person){
   			buildPerson = buildPerson + item + ": " + person[item] + "\r\n";
   		}
   		alert(buildPerson);
   	}
-  	
+
   	function getPersonByName(firstNameSearch, lastNameSearch){
   		for (var item in dataObject) {
   			if (dataObject.hasOwnProperty(item)) {
 				if(dataObject[item].firstName == firstNameSearch){
 					if(dataObject[item].lastName == lastNameSearch){
-					return dataObject[item];
+					return item;
 					}
 				}
 			}
