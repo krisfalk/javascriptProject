@@ -280,7 +280,6 @@ printAllToConsole(dataObject);
   	var descendants = [];
 
   	displayPerson(foundPerson);
-  	alert(foundPerson.firstName + " " + foundPerson.lastName);
 
   	setDescendants(foundPerson);
 
@@ -299,11 +298,11 @@ printAllToConsole(dataObject);
   	function displayPerson(person){
   		var buildPerson = "";
   		for(var item in person){
-  			buildPerson = buildPerson + item + ": " + item.property + "\r\n";
+  			buildPerson = buildPerson + item + ": " + person[item] + "\r\n";
   		}
   		alert(buildPerson);
   	}
-
+  	
   	function getPersonByName(firstNameSearch, lastNameSearch){
   		for (var item in dataObject) {
   			if (dataObject.hasOwnProperty(item)) {
@@ -315,6 +314,7 @@ printAllToConsole(dataObject);
 			}
   		}
   	}
+
 /*function initSearch(){
 	alert("Hello World");
 
