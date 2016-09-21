@@ -275,20 +275,90 @@ function printAllToConsole(dataObj){
 }
 printAllToConsole(dataObject);
 */
-	
-	alert("Search for a person: ");
-  	var foundPerson = getPersonByName(prompt("Enter person's first name: "),prompt("Enter person's last name: "));
-  	var descendants = [];
-  	var weightList = [];
+  	var personList = [];
+  	var traitsToSearch = [];
+  	var immediateFamily = [];
 
-  	displayPerson(dataObject[foundPerson], "");
-  	getDescendants(foundPerson);
-  	displayListOfPersons(descendants);
-  	displayPerson(dataObject[getOldestFromArray(descendants)], "Next of kin:\r\n");
+  	askUser();
 
-  	getPersonTraitWeight(prompt("Enter weight:"));
-  	displayListOfPersons(weightList);
 
+  	function askUser(){
+  		var result = prompt("What do you want to do? Type one of following to search:\r\n'name'\r\n'descendants'\r\n'next of kin'\r\n'trait'\r\n'traits'\r\n'age'\r\n'family'\r\nType 'exit' to end.");
+  		switch(result){
+  			case "name":
+  				var person = promptForName();
+  				errorCheck(person);
+  				displayPerson(dataObject[person], "Match: \r\n");
+  				break;
+  			case "descendants":
+  				var person = promptForName();
+  				errorCheck(person);
+  				personList = [];
+  				getDescendants(person);
+  				displayListOfPersons(personList, "Descendants: ");
+  				break;
+  			case "next of kin":
+  				var person = promptForName();
+  				errorCheck(person);
+  				personList = [];
+  				getDescendants(person);
+  				displayPerson(dataObject[getOldestFromArray(personList)], "Next of kin:\r\n");
+  				break;
+  			case "trait":
+  				var typeSearch = prompt("What trait do you want to search by? type: 'gender, height, weight, eye color, or occupation'");
+  				var input = prompt(typeSearch);
+  				personList = [];
+  				if(typeSearch == "eye color")
+  					searchByTrait("eyeColor", input);
+  				else searchByTrait(typeSearch, input);
+  				displayListOfPersons(personList, "Matches:\r\n");
+  				break;
+  			case "traits":
+  				traitsToSearch = [];
+  				traitsToSearch.push(prompt("Search for male or female?"));
+  				traitsToSearch.push(prompt("Height: "));
+  				traitsToSearch.push(prompt("Weight: "));
+  				traitsToSearch.push(prompt("Eye Color: "));
+  				traitsToSearch.push(prompt("Occupation: "));
+  				displayPerson(dataObject[searchFiveTrait(traitsToSearch)], "Match:\r\n");
+  				break;
+  			case "age":
+  				personList = [];
+  				searchByAge(prompt("Enter age:"));
+  				displayListOfPersons(personList, "Matches: ");
+  				break;
+  			case "family":
+  				personList = [];
+  				var person = promptForName();
+  				errorCheck(person);
+  				getImmediateFamily(person);
+  				displayListOfPersons(personList, "Immediate family: ");
+  				break;
+  			case "exit":
+  				exitWebPage();
+  				break;
+  			default:
+  			    errorCheck(undefined);
+  			    break;
+  		}
+  		askUser();
+  	}
+  	function exitWebpage(){
+  		window.close();
+  	}
+  	function promptForName(){
+  		return getPersonByName(prompt("Enter person's first name: "),prompt("Enter person's last name: "));
+  	}
+  	function errorCheck(check){
+  		try{
+  			if(check == undefined)
+  				throw('Error');
+  		}catch(error){
+  			console.log(error.message);
+  			console.log('No Data Found! Reload webpage.');
+  		}
+  		return check;
+  	}
   	function getOldestFromArray(listOfPeople){
   		var OldestPerson = undefined;
   		for (var i = 0; i < listOfPeople.length; i++) {
@@ -304,16 +374,23 @@ printAllToConsole(dataObject);
   		}
   		return OldestPerson;
   	}
-  	function displayListOfPersons(listOfPeople){
+  	function getImmediateFamily(person){
+  		getSpouse(person);
+  		getDescendants(person);
+  	}
+  	function getSpouse(person){
+  		searchByTrait("currentSpouse", person);
+  	}
+  	function displayListOfPersons(listOfPeople, strType){
   		for(var i = 0; i < listOfPeople.length; i++){
-  			displayPerson(dataObject[listOfPeople[i]], ("Descendant " + (i + 1) + ":\r\n"))
+  			displayPerson(dataObject[listOfPeople[i]], (strType + (i + 1) + ":\r\n"))
   		}
   	}
   	function getDescendants(person){
   		for (var item in dataObject) {
   			if(dataObject[item].parents.length != 0){
   				if(dataObject[item].parents[0] == person || dataObject[item].parents[1] == person){
-  					descendants.push(item);
+  					personList.push(item);
   				}
   			}
   		}
@@ -334,15 +411,49 @@ printAllToConsole(dataObject);
 			}
   		}
   	}
-  	function getPersonTraitWeight(weightSearch){
-  		var weight = undefined;
+  	function searchFiveTrait(listOfTraits){
   		for(var item in dataObject){
-  			if(dataObject[item].weight ==  weightSearch){
-  				weightList.push(item);
-  			}
+  			if(dataObject[item].gender == listOfTraits[0] && dataObject[item].height == listOfTraits[1] && 
+  				dataObject[item].weight == listOfTraits[2] && dataObject[item].eyeColor == listOfTraits[3] && 
+  				dataObject[item].occupation == listOfTraits[4])
+  				return item;
   		}
   	}
-/*function initSearch(){
+  	function searchByAge(ageSearch){
+  		for(var item in dataObject){
+  			if(getAge(dataObject[item].dob) == parseInt(ageSearch))
+  				personList.push(item);
+  		}
+  	}
+  	function getAge(birthDate) {
+
+    	var today = new Date();
+    	var nowyear = today.getFullYear();
+    	var nowmonth = today.getMonth();
+    	var nowday = today.getDate();
+
+    	var currentDoB = birthDate.split("/");
+    	var birthyear = currentDoB[2];
+    	var birthmonth = currentDoB[0];
+    	var birthday = currentDoB[1];
+
+    	var age = nowyear - birthyear;
+    	var age_month = nowmonth - birthmonth;
+    	var age_day = nowday - birthday;
+   
+    	if(age_month < 0 || (age_month == 0 && age_day < 0)) {
+            age = age -1;
+        }
+        age = parseInt(age);
+    	return age;
+	}
+  	function searchByTrait(traitType, userInput){
+  		for(var item in dataObject){
+  			if(dataObject[item][traitType] == userInput)
+  				personList.push(item);
+  		}
+  	}
+  	/*function initSearch(){
 	alert("Hello World");
 
 	// get all the information you need to run the search
@@ -371,4 +482,4 @@ function getFamily(){
 // there will be much more here, and some of the code above will certainly change
 
 initSearch();*/
-window.close(); // exit window as the end of the session -- you may remove this
+//window.close(); // exit window as the end of the session -- you may remove this
