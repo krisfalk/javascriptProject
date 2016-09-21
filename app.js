@@ -279,13 +279,15 @@ printAllToConsole(dataObject);
 	alert("Search for a person: ");
   	var foundPerson = getPersonByName(prompt("Enter person's first name: "),prompt("Enter person's last name: "));
   	var descendants = [];
+  	var weightList = [];
 
   	displayPerson(dataObject[foundPerson], "");
   	getDescendants(foundPerson);
   	displayListOfPersons(descendants);
   	displayPerson(dataObject[getOldestFromArray(descendants)], "Next of kin:\r\n");
 
-
+  	getPersonTraitWeight(prompt("Enter weight:"));
+  	displayListOfPersons(weightList);
 
   	function getOldestFromArray(listOfPeople){
   		var OldestPerson = undefined;
@@ -332,7 +334,14 @@ printAllToConsole(dataObject);
 			}
   		}
   	}
-
+  	function getPersonTraitWeight(weightSearch){
+  		var weight = undefined;
+  		for(var item in dataObject){
+  			if(dataObject[item].weight ==  weightSearch){
+  				weightList.push(item);
+  			}
+  		}
+  	}
 /*function initSearch(){
 	alert("Hello World");
 
