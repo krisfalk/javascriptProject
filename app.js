@@ -265,25 +265,15 @@ var dataObject = {
 	}
 };
 
-/*  Remove this from your final submission
-function printAllToConsole(dataObj){
-	for (var key in dataObj) {
-		if (dataObj.hasOwnProperty(key)) {
-			console.log(key + " -> " + JSON.stringify(dataObj[key]));
-		}
-	}
-}
-printAllToConsole(dataObject);
-*/
-  	var personList = [];
+	var personList = [];
   	var traitsToSearch = [];
   	var immediateFamily = [];
 
+
   	askUser();
 
-
   	function askUser(){
-  		var result = prompt("What do you want to do? Type one of following to search:\r\n'name'\r\n'descendants'\r\n'next of kin'\r\n'trait'\r\n'traits'\r\n'age'\r\n'family'\r\nType 'exit' to end.");
+  		var result = prompt("What do you want to do? Type one of following to search:\r\n'name'\r\n'descendants'\r\n'next of kin'\r\n'trait'\r\n'traits'\r\n'age'\r\n'age range'\r\n'family'\r\nType 'exit' to end.");
   		switch(result){
   			case "name":
   				var person = promptForName();
@@ -295,6 +285,7 @@ printAllToConsole(dataObject);
   				errorCheck(person);
   				personList = [];
   				getDescendants(person);
+  				errorCheck(personList);
   				displayListOfPersons(personList, "Descendants: ");
   				break;
   			case "next of kin":
@@ -302,15 +293,25 @@ printAllToConsole(dataObject);
   				errorCheck(person);
   				personList = [];
   				getDescendants(person);
+  				errorCheck(personList);
   				displayPerson(dataObject[getOldestFromArray(personList)], "Next of kin:\r\n");
   				break;
   			case "trait":
   				var typeSearch = prompt("What trait do you want to search by? type: 'gender, height, weight, eye color, or occupation'");
-  				var input = prompt(typeSearch);
+  				errorCheck(typeSearch);
   				personList = [];
-  				if(typeSearch == "eye color")
+  				if(typeSearch == "eye color"){
+  					var input = prompt(typeSearch);
   					searchByTrait("eyeColor", input);
-  				else searchByTrait(typeSearch, input);
+  				}else if(typeSearch == "height"){
+  					var heightFT = parseInt(prompt("Enter feet:")) * 12;
+					var heightFull = parseInt(prompt("Enter inches:")) + heightFT;
+					searchByTrait("height", heightFull)
+  				}else{
+  					var input = prompt(typeSearch);
+  					searchByTrait(typeSearch, input);
+  				}
+  				errorCheck(personList);
   				displayListOfPersons(personList, "Matches:\r\n");
   				break;
   			case "traits":
@@ -320,28 +321,58 @@ printAllToConsole(dataObject);
   				traitsToSearch.push(prompt("Weight: "));
   				traitsToSearch.push(prompt("Eye Color: "));
   				traitsToSearch.push(prompt("Occupation: "));
-  				displayPerson(dataObject[searchFiveTrait(traitsToSearch)], "Match:\r\n");
+  				var myPerson = dataObject[searchFiveTrait(traitsToSearch)];
+  				errorCheck(myPerson);
+  				displayPerson(myPerson, "Match:\r\n");
   				break;
   			case "age":
   				personList = [];
   				searchByAge(prompt("Enter age:"));
+  				errorCheck(personList);
   				displayListOfPersons(personList, "Matches: ");
   				break;
+  			case "age range":
+  				personList = [];
+  				SearchAgeRange(prompt("Please enter a starting age: "), prompt("Please enter an ending age: "));
+  				errorCheck(personList);
+     			displayListOfPersons(personList, "Matches: ");
+     			break;
   			case "family":
   				personList = [];
   				var person = promptForName();
   				errorCheck(person);
   				getImmediateFamily(person);
+  				errorCheck(personList);
   				displayListOfPersons(personList, "Immediate family: ");
   				break;
   			case "exit":
-  				exitWebPage();
-  				break;
+  				playSound();
+  				return;
   			default:
   			    errorCheck(undefined);
   			    break;
   		}
   		askUser();
+  	}
+  	 function delay(ms) {
+        var cur_d = new Date();
+        var cur_ticks = cur_d.getTime();
+        var ms_passed = 0;
+        while(ms_passed < ms) {
+            var d = new Date();  // Possible memory leak?
+            var ticks = d.getTime();
+            ms_passed = ticks - cur_ticks;
+            // d = null;  // Prevent memory leak?
+        }
+
+    }
+  	function myPersonList(array){
+  		var personList = array;
+  		return personList;
+  	}
+  	function playSound(){
+  		var sound = new Audio("http://themushroomkingdom.net/sounds/wav/smb/smb_gameover.wav"); 
+		sound.play();
   	}
   	function exitWebpage(){
   		window.close();
@@ -351,13 +382,14 @@ printAllToConsole(dataObject);
   	}
   	function errorCheck(check){
   		try{
-  			if(check == undefined)
-  				throw('Error');
+  			if(check == undefined || check.length == 0)
+  				throw(error);
   		}catch(error){
   			console.log(error.message);
   			console.log('No Data Found! Reload webpage.');
+  			alert("Error - No Data");
+  			askUser();
   		}
-  		return check;
   	}
   	function getOldestFromArray(listOfPeople){
   		var OldestPerson = undefined;
@@ -398,18 +430,31 @@ printAllToConsole(dataObject);
   	function displayPerson(person, displayString){
   		var buildPerson = "" + displayString;
   		for(var item in person){
-  			buildPerson = buildPerson + item + ": " + person[item] + "\r\n";
+  			if(item == "parents"){	
+  				for (var i = 0; i < person[item].length; i++){
+  					buildPerson = buildPerson + item + " " + (i + 1) + ": " + dataObject[person[item][i]].firstName + " " + dataObject[person[item][i]].lastName + "\r\n";
+  				}
+  			}else if(item == "height"){
+  				buildPerson = buildPerson + item + ": " + Math.round(person[item] / 12) + "'" + (person[item] % 12) + "\"" + "\r\n";
+  			}else if(item == "currentSpouse"){
+  				if(person[item] != null){
+  					buildPerson = buildPerson + "Spouse: " + dataObject[person[item]].firstName + " " + dataObject[person[item]].lastName  + "\r\n";
+  				}
+  			}else if(item == "weight"){
+  				buildPerson = buildPerson + item + ": " + person[item] + " lbs." + "\r\n";
+  			}else{
+  				buildPerson = buildPerson + item + ": " + person[item] + "\r\n";
+  			}
   		}
   		alert(buildPerson);
   	}
   	function getPersonByName(firstNameSearch, lastNameSearch){
   		for (var item in dataObject) {
-  			if (dataObject.hasOwnProperty(item)) {
-				if(dataObject[item].firstName == firstNameSearch && dataObject[item].lastName == lastNameSearch){
-					return item;
-				}
+			if(dataObject[item].firstName == firstNameSearch && dataObject[item].lastName == lastNameSearch){
+				return item;
 			}
   		}
+  		return undefined;
   	}
   	function searchFiveTrait(listOfTraits){
   		for(var item in dataObject){
@@ -453,33 +498,9 @@ printAllToConsole(dataObject);
   				personList.push(item);
   		}
   	}
-  	/*function initSearch(){
-	alert("Hello World");
-
-	// get all the information you need to run the search
-	var yourName = prompt("Who do you want to search for?");
-
-	// then pass that info to the respective function.
-	var result = getPersonInfo("J", "T")
-
-	// once the search is done, pass the results to the responder function
-	responder(result);
-}
-
-function responder(results){
-	// results may be a list of strings, an object, or a single string. 
-	alert(results);
-}
-
-function getPersonInfo(firstname, lastname){
-		
-}
-
-function getFamily(){
-	// return list of names of immediate family members
-}
-
-// there will be much more here, and some of the code above will certainly change
-
-initSearch();*/
-//window.close(); // exit window as the end of the session -- you may remove this
+  	function SearchAgeRange(startAgeRange, endAgeRange){
+         for(var item in dataObject){
+             if (getAge(dataObject[item].dob) > startAgeRange && getAge(dataObject[item].dob) < endAgeRange)
+                 personList.push(item);
+         }
+     }
