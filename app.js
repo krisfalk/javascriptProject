@@ -407,8 +407,14 @@ var dataObject = {
   		return OldestPerson;
   	}
   	function getImmediateFamily(person){
+  		getParents(dataObject[person].parents);
   		getSpouse(person);
   		getDescendants(person);
+  	}
+  	function getParents(listPerson){
+  		for (var i = 0; i < listPerson.length; i++) {
+  			personList.push(listPerson[i]);
+  		}
   	}
   	function getSpouse(person){
   		searchByTrait("currentSpouse", person);
