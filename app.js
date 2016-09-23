@@ -292,7 +292,7 @@ var dataObject = {
   				var person = promptForName();
   				errorCheck(person);
   				personList = [];
-  				getDescendants(person);
+  				getImmediateFamily(person);
   				errorCheck(personList);
   				displayPerson(dataObject[getOldestFromArray(personList)], "Next of kin:\r\n");
   				break;
@@ -408,9 +408,9 @@ var dataObject = {
   		return OldestPerson;
   	}
   	function getImmediateFamily(person){
-  		getParents(dataObject[person].parents);
   		getSpouse(person);
   		getDescendants(person);
+  		getParents(dataObject[person].parents);
   	}
   	function getParents(listPerson){
   		for (var i = 0; i < listPerson.length; i++) {
