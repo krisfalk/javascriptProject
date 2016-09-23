@@ -347,6 +347,7 @@ var dataObject = {
   				break;
   			case "exit":
   				playSound();
+  				exit();
   				return;
   			default:
   			    errorCheck(undefined);
